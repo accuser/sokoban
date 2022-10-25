@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lan="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Sokoban</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="sokoban"></div>
+    <script type="text/javascript">
+      const sokoban = new Sokoban(document.getElementById("sokoban"));
+
+      if (sokoban) {
+        sokoban.play();
+      }
+    </script>
+  </body>
+</html>

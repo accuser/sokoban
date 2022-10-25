@@ -1,0 +1,46 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#sokoban {
+  width: 100vmin;
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: repeat(5, 20vmin);
+  grid-template-rows: repeat(5, 20vmin);
+  grid-auto-flow: rows;
+}
+
+span {
+  background-color: #808080;
+  background-size: cover;
+  width: 20vmin;
+  height: 20vmin;
+}
+
+span[data-block="0"] {
+  background-image: url("assets/empty.gif");
+}
+
+span[data-block="1"] {
+  background-image: url("assets/socket.gif");
+}
+
+span[data-block="2"] {
+  background-image: url("assets/wall.gif");
+}
+
+span[data-block="4"] {
+  background-image: url("assets/crate.gif");
+}
+
+span[data-block="5"] {
+  background-image: url("assets/docked-crate.gif");
+}
+
+span[data-block="8"],
+span[data-block="9"] {
+  background-image: url("assets/player.gif");
+}

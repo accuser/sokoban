@@ -7,13 +7,15 @@ class Sokoban {
   #target;
   #timer;
 
-  static EMPTY = 0;
-  static SOCKET = 1;
-  static WALL = 2;
-  static CRATE = 4;
-  static PLAYER = 8;
-
   static TICK = 100;
+
+  static TILE = Object.freeze({
+    EMPTY: 0,
+    SOCKET: 1,
+    WALL: 2,
+    CRATE: 4,
+    PLAYER: 8,
+  });
 
   /**
    * @param {HTMLDivElement} target
@@ -26,10 +28,28 @@ class Sokoban {
   /**
    * Get the current HTML representation of the level.
    */
-  get #html() {
-    return this.#blocks
+  get #levelHtml() {
+    return `<div class="level">${this.#blocks
       .map((block) => `<span data-block="${block}"></span>`)
-      .join("");
+      .join("")}</div>`;
+  }
+
+  get #movesHtml() {
+    return `<p class="moves">Moves: <label>${this.#moves}</label></p>`;
+  }
+
+  get #timerHtml() {
+    const time = new Date(this.#timer);
+
+    const formattedTime = [time.getMinutes(), time.getSeconds()]
+      .map((part) => part.toString().padStart(2, "0"))
+      .join(":");
+
+    return `<p class="timer">Timer: <time timestamp=${time.getTime()}>${formattedTime}</time></p>`;
+  }
+
+  get #html() {
+    return [this.#levelHtml, this.#movesHtml, this.#timerHtml].join("");
   }
 
   /**
@@ -51,32 +71,22 @@ class Sokoban {
   }
 
   /**
-   * The player's move count.
-   *
-   * @type {number}
-   */
-  get moves() {
-    return this.#moves;
-  }
-
-  /**
    * The player's current position.
    *
    * @type {number}
    */
   get position() {
-    return this.#blocks.findIndex((block) => block & Sokoban.PLAYER);
+    return this.#blocks.findIndex((block) => block & Sokoban.TILE.PLAYER);
   }
 
   /**
-   * The player's level timer.
+   * The player's current level timer in milliseconds.
    *
-   * @type {timer}
+   * @type {number}
    */
   get timer() {
     return this.#timer;
   }
-
   /**
    * The width of the game's current level.
    *
@@ -106,28 +116,30 @@ class Sokoban {
   }
 
   /**
+   * Callback to handle keyboard "keydown" events.
+   *
    * @param {KeyboardEvent} event
    */
-  #keys({ key }) {
+  #onKeyDown({ key }) {
     switch (key) {
       case "ArrowDown":
       case "Down":
-        this.#move(0, +1);
+        this.#movePlayer(0, +1);
         break;
 
       case "ArrowLeft":
       case "Left":
-        this.#move(-1, 0);
+        this.#movePlayer(-1, 0);
         break;
 
       case "ArrowRight":
       case "Right":
-        this.#move(+1, 0);
+        this.#movePlayer(+1, 0);
         break;
 
       case "ArrowUp":
       case "Up":
-        this.#move(0, -1);
+        this.#movePlayer(0, -1);
         break;
     }
 
@@ -138,7 +150,9 @@ class Sokoban {
     this.#tick();
     this.#draw();
 
-    if (this.#blocks.find((block) => block === Sokoban.CRATE) === undefined) {
+    if (
+      this.#blocks.find((block) => block === Sokoban.TILE.CRATE) === undefined
+    ) {
       alert("Winner!");
       this.#stop();
     }
@@ -148,17 +162,18 @@ class Sokoban {
    * @param {number} dx
    * @param {number} dy
    */
-  #move(dx, dy, from = this.position, to = from + dx + dy * this.width) {
-    if (this.#blocks[to] & Sokoban.CRATE) {
-      this.#push(dx, dy, to);
+  #movePlayer(dx, dy, from = this.position, to = from + dx + dy * this.width) {
+    if (this.#blocks[to] & Sokoban.TILE.CRATE) {
+      this.#pushCrate(dx, dy, to);
     }
 
     if (
-      this.#blocks[to] === Sokoban.EMPTY ||
-      this.#blocks[to] === Sokoban.SOCKET
+      this.#blocks[to] === Sokoban.TILE.EMPTY ||
+      this.#blocks[to] === Sokoban.TILE.SOCKET
     ) {
-      this.#blocks[from] -= Sokoban.PLAYER;
-      this.#blocks[to] += Sokoban.PLAYER;
+      this.#blocks[from] -= Sokoban.TILE.PLAYER;
+      this.#blocks[to] += Sokoban.TILE.PLAYER;
+      this.#moves += 1;
     }
   }
 
@@ -166,13 +181,13 @@ class Sokoban {
    * @param {number} dx
    * @param {number} dy
    */
-  #push(dx, dy, from, to = from + dx + dy * this.width) {
+  #pushCrate(dx, dy, from, to = from + dx + dy * this.width) {
     if (
-      this.#blocks[to] === Sokoban.EMPTY ||
-      this.#blocks[to] === Sokoban.SOCKET
+      this.#blocks[to] === Sokoban.TILE.EMPTY ||
+      this.#blocks[to] === Sokoban.TILE.SOCKET
     ) {
-      this.#blocks[from] -= Sokoban.CRATE;
-      this.#blocks[to] += Sokoban.CRATE;
+      this.#blocks[from] -= Sokoban.TILE.CRATE;
+      this.#blocks[to] += Sokoban.TILE.CRATE;
     }
   }
 
@@ -181,7 +196,7 @@ class Sokoban {
       clearInterval(this.#interval);
     }
 
-    window.removeEventListener("keydown", this.#keys.bind(this));
+    window.removeEventListener("keydown", this.#onKeyDown.bind(this));
   }
 
   #tick() {
@@ -199,6 +214,6 @@ class Sokoban {
     this.#draw();
 
     this.#interval = setInterval(this.#loop.bind(this), Sokoban.TICK);
-    window.addEventListener("keydown", this.#keys.bind(this));
+    window.addEventListener("keydown", this.#onKeyDown.bind(this));
   }
 }

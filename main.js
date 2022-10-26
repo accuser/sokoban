@@ -1,22 +1,53 @@
 class Sokoban {
-  #blocks = [
-    2, 2, 2, 2, 2, 2, 1, 0, 0, 2, 2, 0, 4, 0, 2, 2, 0, 0, 8, 2, 2, 2, 2, 2, 2,
-  ];
+  #blocks;
   #interval;
+  #level;
+  #levels;
   #moves;
   #target;
+  #timer;
 
-  EMPTY = 0;
-  SOCKET = 1;
-  WALL = 2;
-  CRATE = 4;
-  PLAYER = 8;
+  static EMPTY = 0;
+  static SOCKET = 1;
+  static WALL = 2;
+  static CRATE = 4;
+  static PLAYER = 8;
+
+  static TICK = 100;
 
   /**
    * @param {HTMLDivElement} target
    */
-  constructor(target) {
+  constructor(target, levels) {
+    this.#levels = levels;
     this.#target = target;
+  }
+
+  /**
+   * Get the current HTML representation of the level.
+   */
+  get #html() {
+    return this.#blocks
+      .map((block) => `<span data-block="${block}"></span>`)
+      .join("");
+  }
+
+  /**
+   * The height of the game's current level.
+   *
+   * @type {number}
+   */
+  get height() {
+    return this.#level.height;
+  }
+
+  /**
+   * The game's current level.
+   *
+   * @type {number}
+   */
+  get level() {
+    return this.#level.id;
   }
 
   /**
@@ -34,20 +65,44 @@ class Sokoban {
    * @type {number}
    */
   get position() {
-    return this.#blocks.findIndex((block) => block & this.PLAYER);
+    return this.#blocks.findIndex((block) => block & Sokoban.PLAYER);
   }
 
   /**
-   * Get the HTML representation of the playing field.
+   * The player's level timer.
+   *
+   * @type {timer}
    */
-  get #html() {
-    return this.#blocks
-      .map((block) => `<span data-block="${block}"></span>`)
-      .join("");
+  get timer() {
+    return this.#timer;
+  }
+
+  /**
+   * The width of the game's current level.
+   *
+   * @type {number}
+   */
+  get width() {
+    return this.#level.width;
   }
 
   #draw() {
     this.#target.innerHTML = this.#html;
+  }
+
+  #init(level) {
+    this.#level = levels.find(({ id }) => id === level);
+    this.#moves = 0;
+    this.#timer = 0;
+
+    this.#blocks = this.#level.rows
+      .map((row) =>
+        row
+          .padEnd(this.width)
+          .split("")
+          .map((c) => [" ", ".", "#", , "$", , , , "@"].indexOf(c))
+      )
+      .reduce((prev, curr) => prev.concat(curr), []);
   }
 
   /**
@@ -80,9 +135,10 @@ class Sokoban {
   }
 
   #loop() {
+    this.#tick();
     this.#draw();
 
-    if (this.#blocks.find((block) => block === this.CRATE) === undefined) {
+    if (this.#blocks.find((block) => block === Sokoban.CRATE) === undefined) {
       alert("Winner!");
       this.#stop();
     }
@@ -92,14 +148,17 @@ class Sokoban {
    * @param {number} dx
    * @param {number} dy
    */
-  #move(dx, dy, from = this.position, to = from + dx + dy * 5) {
-    if (this.#blocks[to] === this.CRATE) {
+  #move(dx, dy, from = this.position, to = from + dx + dy * this.width) {
+    if (this.#blocks[to] & Sokoban.CRATE) {
       this.#push(dx, dy, to);
     }
 
-    if (this.#blocks[to] === this.EMPTY || this.#blocks[to] === this.SOCKET) {
-      this.#blocks[from] -= this.PLAYER;
-      this.#blocks[to] += this.PLAYER;
+    if (
+      this.#blocks[to] === Sokoban.EMPTY ||
+      this.#blocks[to] === Sokoban.SOCKET
+    ) {
+      this.#blocks[from] -= Sokoban.PLAYER;
+      this.#blocks[to] += Sokoban.PLAYER;
     }
   }
 
@@ -107,18 +166,14 @@ class Sokoban {
    * @param {number} dx
    * @param {number} dy
    */
-  #push(dx, dy, from, to = from + dx + dy * 5) {
-    if (this.#blocks[to] === this.EMPTY || this.#blocks[to] === this.SOCKET) {
-      this.#blocks[from] -= this.CRATE;
-      this.#blocks[to] += this.CRATE;
+  #push(dx, dy, from, to = from + dx + dy * this.width) {
+    if (
+      this.#blocks[to] === Sokoban.EMPTY ||
+      this.#blocks[to] === Sokoban.SOCKET
+    ) {
+      this.#blocks[from] -= Sokoban.CRATE;
+      this.#blocks[to] += Sokoban.CRATE;
     }
-  }
-
-  #init() {
-    this.#moves = 0;
-    this.#interval = setInterval(this.#loop.bind(this), 100);
-
-    window.addEventListener("keydown", this.#keys.bind(this));
   }
 
   #stop() {
@@ -129,8 +184,21 @@ class Sokoban {
     window.removeEventListener("keydown", this.#keys.bind(this));
   }
 
-  play() {
+  #tick() {
+    this.#timer += Sokoban.TICK;
+  }
+
+  /**
+   * Play the game.
+   *
+   * @param {number} level
+   */
+  play(level = 1) {
     this.#stop();
-    this.#init();
+    this.#init(level);
+    this.#draw();
+
+    this.#interval = setInterval(this.#loop.bind(this), Sokoban.TICK);
+    window.addEventListener("keydown", this.#keys.bind(this));
   }
 }

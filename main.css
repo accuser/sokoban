@@ -4,7 +4,7 @@ body {
   padding: 0;
 }
 
-#sokoban {
+.level {
   --level-width: 19;
   --level-height: 11;
   --block-width: calc(100vmin / var(--level-width));

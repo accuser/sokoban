@@ -5,19 +5,22 @@ body {
 }
 
 #sokoban {
+  --level-width: 19;
+  --level-height: 11;
+  --block-width: calc(100vmin / var(--level-width));
   width: 100vmin;
   display: grid;
   grid-gap: 0px;
-  grid-template-columns: repeat(5, 20vmin);
-  grid-template-rows: repeat(5, 20vmin);
+  grid-template-columns: repeat(var(--level-width), var(--block-width));
+  grid-template-rows: repeat(var(--level-height), var(--block-width));
   grid-auto-flow: rows;
 }
 
 span {
   background-color: #808080;
   background-size: cover;
-  width: 20vmin;
-  height: 20vmin;
+  width: var(--block-width);
+  height: var(--block-width);
 }
 
 span[data-block="0"] {

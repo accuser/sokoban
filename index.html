@@ -10,10 +10,9 @@
     <script src="sokoban.js" charset="utf-8"></script>
   </head>
   <body>
-    <canvas id="map"></canvas>
-    <div id="sokoban"></div>
+    <canvas id="sokoban" width="640" height="480"></canvas>
     <script type="text/javascript">
-      const sokoban = new Sokoban(document.getElementById("game"), levels);
+      const sokoban = new Sokoban(document.getElementById("sokoban"));
 
       if (sokoban) {
         sokoban.play();

@@ -11,10 +11,9 @@ class Sokoban {
   #timer;
 
   /**
-   * @param {Object} config
-   * @param {HTMLCanvasElement} config.canvas
+   * @param {HTMLCanvasElement} canvas
    */
-  constructor({ canvas }) {
+  constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = canvas.getContext("2d");
   }
@@ -25,15 +24,11 @@ class Sokoban {
    * @type {number}
    */
   get position() {
-    return this.#level.tiles.findIndex((tile) => tile & Level.TILE.PLAYER);
-  }
-
-  get width() {
-    return this.#level.width;
+    return this.#tiles.findIndex((tile) => tile & 8);
   }
 
   #bindInput() {
-    window.addEventListener("keydown", throttle(handleInput.bind(this), 100));
+    window.addEventListener("keydown", this.#handleInput.bind(this), 100);
   }
 
   /**
@@ -43,26 +38,26 @@ class Sokoban {
     switch (key) {
       case "ArrowDown":
       case "Down":
-      case "S":
-        this.#move(0, +1);
+      case "s":
+        this.#movePlayer(0, +1);
         break;
 
       case "ArrowLeft":
       case "Left":
-      case "A":
-        this.#move(-1, 0);
+      case "a":
+        this.#movePlayer(-1, 0);
         break;
 
       case "ArrowRight":
       case "Right":
-      case "D":
-        this.#move(+1, 0);
+      case "d":
+        this.#movePlayer(+1, 0);
         break;
 
       case "ArrowUp":
       case "Up":
-      case "W":
-        this.#move(0, -1);
+      case "w":
+        this.#movePlayer(0, -1);
         break;
 
       default:
@@ -79,18 +74,15 @@ class Sokoban {
     dx,
     dy,
     from = this.position,
-    to = this.position + dx + dy * this.width
+    to = this.position + dx + dy * this.#level.width
   ) {
-    if (this.#level.tiles[to] & Sokoban.TILE.CRATE) {
+    if (this.#tiles[to] & 4) {
       this.#pushCrate(dx, dy, to);
     }
 
-    if (
-      this.#level.tiles[to] === Sokoban.TILE.EMPTY ||
-      this.#level.tiles[to] === Sokoban.TILE.SOCKET
-    ) {
-      this.#level.tiles[from] -= Sokoban.TILE.PLAYER;
-      this.#level.tiles[to] += Sokoban.TILE.PLAYER;
+    if (this.#tiles[to] === 0 || this.#tiles[to] === 1) {
+      this.#tiles[from] -= 8;
+      this.#tiles[to] += 8;
       this.#moves += 1;
     }
   }
@@ -99,13 +91,10 @@ class Sokoban {
    * @param {number} dx
    * @param {number} dy
    */
-  #pushCrate(dx, dy, from, to = from + dx + dy * this.width) {
-    if (
-      this.#level.tiles[to] === Sokoban.TILE.EMPTY ||
-      this.#level.tiles[to] === Sokoban.TILE.SOCKET
-    ) {
-      this.#level.tiles[from] -= Sokoban.TILE.CRATE;
-      this.#level.tiles[to] += Sokoban.TILE.CRATE;
+  #pushCrate(dx, dy, from, to = from + dx + dy * this.#level.width) {
+    if (this.#tiles[to] === 0 || this.#tiles[to] === 1) {
+      this.#tiles[from] -= 4;
+      this.#tiles[to] += 4;
     }
   }
 
@@ -114,8 +103,18 @@ class Sokoban {
       this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
 
       const tiles = [...this.#level.tiles];
+      const scale = this.#canvas.width / this.#level.width;
 
-      // this.#ctx.drawImage(image, dx,dy,dw,dh)
+      for (let i = 0; i < this.#tiles.length; i++) {
+        const dx = i % this.#level.width;
+        const dy = Math.floor(i / this.#level.width);
+
+        const image = Level.TILE[this.#tiles[i]];
+
+        if (image) {
+          this.#ctx.drawImage(image, dx * scale, dy * scale, scale, scale);
+        }
+      }
 
       requestAnimationFrame(loop);
     };
@@ -128,6 +127,8 @@ class Sokoban {
     this.#moves = 0;
     this.#tiles = [...this.#level.tiles];
     this.#timer = 0;
+
+    this.#bindInput();
 
     this.#startLoop();
   }

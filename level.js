@@ -1,14 +1,26 @@
 class Level {
   static TILE = Object.freeze({
-    EMPTY: 0,
-    SOCKET: 1,
-    WALL: 2,
-    CRATE: 4,
-    PLAYER: 8,
+    0: new Image(),
+    1: new Image(),
+    2: new Image(),
+    4: new Image(),
+    5: new Image(),
+    8: new Image(),
+    9: new Image(),
   });
+
+  #level;
 
   constructor(id) {
     this.#level = Level.#levels.find((map) => map.id === id);
+
+    Level.TILE[0].src = "assets/empty.png";
+    Level.TILE[1].src = "assets/socket.png";
+    Level.TILE[2].src = "assets/wall.png";
+    Level.TILE[4].src = "assets/crate.png";
+    Level.TILE[5].src = "assets/socket-crate.png";
+    Level.TILE[8].src = "assets/player.png";
+    Level.TILE[9].src = "assets/player.png";
   }
 
   get tiles() {
@@ -20,6 +32,10 @@ class Level {
           .map((c) => [" ", ".", "#", , "$", , , , "@"].indexOf(c))
       )
       .reduce((prev, curr) => prev.concat(curr), []);
+  }
+
+  get width() {
+    return this.#level.width;
   }
 
   // Original Sokoban levels from https://www.sourcecode.se/sokoban/levels

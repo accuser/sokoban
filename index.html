@@ -2,16 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Sokoban</title>
+    <title>倉庫番</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js" charset="utf-8"></script>
-    <script src="levels.js" charset="utf-8"></script>
+    <script src="dist/bundle.js" charset="utf-8"></script>
   </head>
   <body>
-    <div id="sokoban"></div>
+    <canvas id="sokoban" width="1024" height="768"></canvas>
     <script type="text/javascript">
-      const sokoban = new Sokoban(document.getElementById("sokoban"), levels);
+      const sokoban = new Sokoban(document.getElementById("sokoban"));
 
       if (sokoban) {
         sokoban.play();

@@ -1,7 +1,4 @@
-// Original Sokoban levels from https://www.sourcecode.se/sokoban/levels
-// Copyright © Thinking Rabbit
-
-const levels = [
+levels = [
   {
     id: 1,
     width: 19,
@@ -1064,3 +1061,16 @@ const levels = [
     ],
   },
 ];
+
+for (const { id, width, rows } of levels) {
+  const tiles = rows
+    .map((row) =>
+      row
+        .padEnd(width)
+        .split("")
+        .map((c) => [" ", ".", "#", , "$", , , , "@"].indexOf(c))
+    )
+    .reduce((prev, curr) => prev.concat(curr), []);
+
+  console.log(`static [${id - 1}] = new Level(${width}, [${tiles}])`);
+}

@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "rollup": "rollup -c",
+    "generate": "node ./generate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.2.2"
+    "jest": "^29.2.2",
+    "rollup": "^3.2.3"
   }
 }

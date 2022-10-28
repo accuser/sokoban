@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bundle": "rollup level.js tile.js utils.js sokoban.js --file main.js",
+    "rollup": "rollup -c",
     "generate": "node ./generate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

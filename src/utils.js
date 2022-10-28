@@ -20,3 +20,5 @@ const throttle = (callback, timeout = 100) => {
     }, timeout);
   };
 };
+
+export { throttle };

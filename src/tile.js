@@ -29,3 +29,5 @@ class Tile {
   static [8] = new Tile("assets/player.png");
   static [9] = new Tile("assets/player.png");
 }
+
+export default Tile;

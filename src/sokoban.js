@@ -1,3 +1,7 @@
+import Level from "./level";
+import Tile from "./tile";
+import { throttle } from "./utils";
+
 class Sokoban {
   static EMPTY = 0;
   static SOCKET = 1;
@@ -151,3 +155,5 @@ class Sokoban {
     this.#startLoop();
   }
 }
+
+export default Sokoban;

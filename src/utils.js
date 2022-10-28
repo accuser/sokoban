@@ -4,7 +4,7 @@
  * @param {function} callback
  * @param {number} timeout
  */
-const throttle = (callback, timeout) => {
+const throttle = (callback, timeout = 100) => {
   let isThrottling = false;
 
   return function () {
@@ -15,7 +15,7 @@ const throttle = (callback, timeout) => {
     isThrottling = true;
 
     setTimeout(() => {
-      func.apply(this, arguments);
+      callback.apply(this, arguments);
       isThrottling = false;
     }, timeout);
   };

@@ -4,46 +4,11 @@ body {
   padding: 0;
 }
 
-.level {
-  --level-width: 19;
-  --level-height: 11;
-  --block-width: calc(100vmin / var(--level-width));
-  width: 100vmin;
-  display: grid;
-  grid-gap: 0px;
-  grid-template-columns: repeat(var(--level-width), var(--block-width));
-  grid-template-rows: repeat(var(--level-height), var(--block-width));
-  grid-auto-flow: rows;
-}
-
-span {
-  background-color: #808080;
-  background-size: cover;
-  width: var(--block-width);
-  height: var(--block-width);
-}
-
-span[data-block="0"] {
-  background-image: url("assets/empty.gif");
-}
-
-span[data-block="1"] {
-  background-image: url("assets/socket.gif");
-}
-
-span[data-block="2"] {
-  background-image: url("assets/wall.gif");
-}
-
-span[data-block="4"] {
-  background-image: url("assets/crate.gif");
-}
-
-span[data-block="5"] {
-  background-image: url("assets/docked-crate.gif");
-}
-
-span[data-block="8"],
-span[data-block="9"] {
-  background-image: url("assets/player.gif");
+canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }

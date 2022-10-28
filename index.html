@@ -2,15 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Sokoban</title>
+    <title>倉庫番</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="utils.js" charset="utf-8"></script>
-    <script src="level.js" charset="utf-8"></script>
-    <script src="sokoban.js" charset="utf-8"></script>
+    <script src="src/level.js" charset="utf-8"></script>
+    <script src="src/sokoban.js" charset="utf-8"></script>
+    <script src="src/tile.js" charset="utf-8"></script>
+    <script src="src/utils.js" charset="utf-8"></script>
   </head>
   <body>
-    <canvas id="sokoban" width="640" height="480"></canvas>
+    <canvas id="sokoban" width="1024" height="768"></canvas>
     <script type="text/javascript">
       const sokoban = new Sokoban(document.getElementById("sokoban"));
 

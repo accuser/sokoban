@@ -92,8 +92,6 @@ class Sokoban {
           break;
       }
     }
-
-    clearInterval(this.#interval);
   }
 
   #tick() {
@@ -127,6 +125,7 @@ class Sokoban {
     };
 
     const next = () => {
+      clearInterval(this.#interval);
       window.removeEventListener("keydown", this.#handleInput.bind(this));
 
       alert(`Level Complete`);

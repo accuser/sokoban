@@ -1,4 +1,3 @@
-import Sokoban from "./sokoban";
 import Tile from "./tile";
 
 class Level {
@@ -40,6 +39,13 @@ class Level {
    */
   get tiles() {
     return this.#tiles;
+  }
+
+  /**
+   * @type {number}
+   */
+  get timer() {
+    return this.#timer;
   }
 
   /**
@@ -92,8 +98,11 @@ class Level {
     }
   }
 
-  tick(intreval) {
-    this.#timer += intreval;
+  /**
+   * @param {number} intreval
+   */
+  tick(interval) {
+    this.#timer += interval;
   }
 
   static [0] = new Level(

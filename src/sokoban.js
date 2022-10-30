@@ -16,19 +16,15 @@ class Sokoban {
    */
   #canvas;
 
+  /** @type {NodeJS.Timer} */
+  #interval;
+
   /**
    * The current level.
    *
    * @type {Level}
    */
   #level;
-
-  /**
-   * The current timer.
-   *
-   * @type {number}
-   */
-  #timer;
 
   /**
    * @param {HTMLCanvasElement} canvas
@@ -48,7 +44,7 @@ class Sokoban {
 
     this.#level.draw(ctx);
 
-    const time = new Date(this.#timer);
+    const time = new Date(this.#level.timer);
 
     const formattedTime = [time.getMinutes(), time.getSeconds()]
       .map((part) => part.toString().padStart(2, "0"))
@@ -56,8 +52,8 @@ class Sokoban {
 
     ctx.fillStyle = "white";
     ctx.font = "bold 24px sans-serif";
-
     ctx.textAlign = "center";
+
     ctx.fillText(
       `${this.#level.moves.toString().padStart(4)}  /  ${formattedTime}`,
       this.#canvas.width / 2,
@@ -96,11 +92,13 @@ class Sokoban {
           break;
       }
     }
+
+    clearInterval(this.#interval);
   }
 
   #tick() {
-    if (!this.#level.isComplete) {
-      this.#level?.tick(Sokoban.TICK);
+    if (this.#level.isComplete === false) {
+      this.#level.tick(Sokoban.TICK);
     }
   }
 
@@ -108,7 +106,15 @@ class Sokoban {
    * @param {number} level
    */
   play(level = 0) {
-    const interval = setInterval(this.#tick.bind(this), Sokoban.TICK);
+    const init = () => {
+      this.#level = Level[level];
+
+      if (this.#level) {
+        window.addEventListener("keydown", this.#handleInput.bind(this));
+        this.#interval = setInterval(this.#tick.bind(this), Sokoban.TICK);
+        requestAnimationFrame(loop);
+      }
+    };
 
     const loop = () => {
       this.#draw();
@@ -126,18 +132,6 @@ class Sokoban {
       alert(`Level Complete`);
 
       this.play(level + 1);
-    };
-
-    const init = () => {
-      this.#level = Level[level];
-      this.#timer = 0;
-
-      if (this.#level) {
-        window.addEventListener("keydown", this.#handleInput.bind(this));
-        requestAnimationFrame(loop);
-      } else {
-        clearInterval(interval);
-      }
     };
 
     init();

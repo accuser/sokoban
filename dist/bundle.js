@@ -74,13 +74,6 @@ var Sokoban = (function () {
     }
 
     /**
-     * @type {number[]}
-     */
-    get tiles() {
-      return this.#tiles;
-    }
-
-    /**
      * @type {number}
      */
     get timer() {
@@ -99,14 +92,14 @@ var Sokoban = (function () {
      * @param {number} scale
      */
     draw(ctx, scale = ctx.canvas.width / this.width) {
-      this.tiles.forEach((value, index) => {
-        const dx = index % this.width;
-        const dy = Math.floor(index / this.width);
+      this.#tiles
+        .map((tile) => Tile[tile])
+        .forEach((tile, index) => {
+          const dx = index % this.width;
+          const dy = Math.floor(index / this.width);
 
-        const tile = Tile[value];
-
-        tile.draw(ctx, dx * scale, dy * scale, scale, scale);
-      });
+          tile.draw(ctx, dx * scale, dy * scale, scale, scale);
+        });
     }
 
     /**
@@ -114,11 +107,11 @@ var Sokoban = (function () {
      * @param {number} dy
      */
     move(dx, dy, from = this.position, to = from + dx + dy * this.width) {
-      if (this.tiles[to] & Tile.CRATE) {
+      if (this.#tiles[to] & Tile.CRATE) {
         this.#push(dx, dy, to);
       }
 
-      if (this.tiles[to] === Tile.EMPTY || this.tiles[to] === Tile.SOCKET) {
+      if (this.#tiles[to] === Tile.EMPTY || this.#tiles[to] === Tile.SOCKET) {
         this.#tiles[from] -= Tile.PLAYER;
         this.#tiles[to] += Tile.PLAYER;
 
@@ -131,7 +124,7 @@ var Sokoban = (function () {
      * @param {number} dy
      */
     #push(dx, dy, from, to = from + dx + dy * this.width) {
-      if (this.tiles[to] === Tile.EMPTY || this.tiles[to] === Tile.SOCKET) {
+      if (this.#tiles[to] === Tile.EMPTY || this.#tiles[to] === Tile.SOCKET) {
         this.#tiles[from] -= Tile.CRATE;
         this.#tiles[to] += Tile.CRATE;
       }
@@ -999,8 +992,6 @@ var Sokoban = (function () {
             break;
         }
       }
-
-      clearInterval(this.#interval);
     }
 
     #tick() {
@@ -1034,6 +1025,7 @@ var Sokoban = (function () {
       };
 
       const next = () => {
+        clearInterval(this.#interval);
         window.removeEventListener("keydown", this.#handleInput.bind(this));
 
         alert(`Level Complete`);

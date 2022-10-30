@@ -1,4 +1,10 @@
 class Tile {
+  static EMPTY = 0;
+  static SOCKET = 1;
+  static WALL = 2;
+  static CRATE = 4;
+  static PLAYER = 8;
+
   /** @type {HTMLImageElement} */
   #image;
 

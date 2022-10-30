@@ -1,10 +1,38 @@
+import Sokoban from "./sokoban";
+import Tile from "./tile";
+
 class Level {
+  #moves;
   #tiles;
+  #timer;
   #width;
 
   constructor(width, tiles) {
+    this.#moves = 0;
+    this.#tiles = [...tiles];
+    this.#timer = 0;
     this.#width = width;
-    this.#tiles = tiles;
+  }
+
+  /**
+   * @type {boolean}
+   */
+  get isComplete() {
+    return !this.#tiles.some((tile) => tile === Tile.CRATE);
+  }
+
+  /**
+   * @type {number}
+   */
+  get moves() {
+    return this.#moves;
+  }
+
+  /**
+   * @type {number}
+   */
+  get position() {
+    return this.#tiles.findIndex((tile) => tile & Tile.PLAYER);
   }
 
   /**
@@ -19,6 +47,53 @@ class Level {
    */
   get width() {
     return this.#width;
+  }
+
+  /**
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} scale
+   */
+  draw(ctx, scale = ctx.canvas.width / this.width) {
+    this.tiles.forEach((value, index) => {
+      const dx = index % this.width;
+      const dy = Math.floor(index / this.width);
+
+      const tile = Tile[value];
+
+      tile.draw(ctx, dx * scale, dy * scale, scale, scale);
+    });
+  }
+
+  /**
+   * @param {number} dx
+   * @param {number} dy
+   */
+  move(dx, dy, from = this.position, to = from + dx + dy * this.width) {
+    if (this.tiles[to] & Tile.CRATE) {
+      this.#push(dx, dy, to);
+    }
+
+    if (this.tiles[to] === Tile.EMPTY || this.tiles[to] === Tile.SOCKET) {
+      this.#tiles[from] -= Tile.PLAYER;
+      this.#tiles[to] += Tile.PLAYER;
+
+      this.#moves += 1;
+    }
+  }
+
+  /**
+   * @param {number} dx
+   * @param {number} dy
+   */
+  #push(dx, dy, from, to = from + dx + dy * this.width) {
+    if (this.tiles[to] === Tile.EMPTY || this.tiles[to] === Tile.SOCKET) {
+      this.#tiles[from] -= Tile.CRATE;
+      this.#tiles[to] += Tile.CRATE;
+    }
+  }
+
+  tick(intreval) {
+    this.#timer += intreval;
   }
 
   static [0] = new Level(

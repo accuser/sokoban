@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "rollup": "rollup -c",
+    "dev": "rollup -c --watch",
+    "build": "rollup -c",
     "generate": "node ./generate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

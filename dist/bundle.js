@@ -916,7 +916,10 @@ var Sokoban = (function () {
      */
     #canvas;
 
-    /** @type {NodeJS.Timer} */
+    /** Interval instance.
+     *
+     * @type {NodeJS.Timer}
+     */
     #interval;
 
     /**
@@ -927,6 +930,9 @@ var Sokoban = (function () {
     #level;
 
     /**
+     * Initialise a new instance of the Sokoban class with the target canvas
+     * element for rendering.
+     *
      * @param {HTMLCanvasElement} canvas
      */
     constructor(canvas) {
@@ -962,6 +968,8 @@ var Sokoban = (function () {
     }
 
     /**
+     * Handle keyboard input.
+     *
      * @param {KeyboardEvent} event
      */
     #handleInput({ key, repeat }) {
@@ -994,6 +1002,9 @@ var Sokoban = (function () {
       }
     }
 
+    /**
+     * Propagate the Sokoban timer to the current level.
+     */
     #tick() {
       if (this.#level.isComplete === false) {
         this.#level.tick(Sokoban.TICK);
@@ -1001,6 +1012,8 @@ var Sokoban = (function () {
     }
 
     /**
+     * Start playing a Sokoban level.
+     *
      * @param {number} level
      */
     play(level = 0) {
@@ -1010,6 +1023,7 @@ var Sokoban = (function () {
         if (this.#level) {
           window.addEventListener("keydown", this.#handleInput.bind(this));
           this.#interval = setInterval(this.#tick.bind(this), Sokoban.TICK);
+
           requestAnimationFrame(loop);
         }
       };
